@@ -15,7 +15,7 @@ struct sockaddr_in udp_addr;
 struct sockaddr_in udp_client_addr;
 struct ip_mreq group;
 int mc_sock; 	// the multicast socket file descriptor
-int udp_sock; // the udp socket file descriptor
+int udp_sock; 	// the udp socket file descriptor
 int datalen;
 int recvlen;
 char mcbuf[BUFLEN];
@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 		exit(1);
 	}
 
-  /* construct an IGMP join request structure */
+  	/* construct an IGMP join request structure */
 	group.imr_multiaddr.s_addr = inet_addr(multicast_ip);
 	group.imr_interface.s_addr = INADDR_ANY;
 		
@@ -106,18 +106,20 @@ int main(int argc, char *argv[])
 	
 	/* Read a message from the UDP client so that we can get its IP address */
 	if ((recvlen = recvfrom(udp_sock, 
-													udpbuf, 
-													BUFLEN, 
-													0, 
-													(struct sockaddr *) &udp_client_addr, 
-													&client_length)) == -1)
-  {
+				udpbuf, 
+				BUFLEN, 
+				0, 
+				(struct sockaddr *) &udp_client_addr, 
+				&client_length)) == -1)
+  	{
 		perror("UDP packet receive failed");
 		exit(1);
-  }
+	}
 	else
 	{
-		printf("Connection to %s port %d successful\n", inet_ntoa(udp_client_addr.sin_addr), ntohs(udp_client_addr.sin_port));
+		printf("Connection to %s port %d successful\n", 
+			inet_ntoa(udp_client_addr.sin_addr), 
+			ntohs(udp_client_addr.sin_port));
 	}
 	
 	printf("Listening to multicast address %s port %d\n", multicast_ip, multicast_port);
@@ -136,11 +138,11 @@ int main(int argc, char *argv[])
 
 		/* Send the multicast message to the UDP client */
 		if ((sendto(udp_sock, 
-								mcbuf, 
-								(int)strlen(mcbuf) + 1, 
-								0, 
-								(struct sockaddr *) &udp_client_addr, 
-								server_length)) == -1)
+			mcbuf, 
+			(int)strlen(mcbuf) + 1, 
+			0, 
+			(struct sockaddr *) &udp_client_addr, 
+			server_length)) == -1)
 		{
 			perror("Data tranmission to UDP client failed");
 			close(mc_sock);
